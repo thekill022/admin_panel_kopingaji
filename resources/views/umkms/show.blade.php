@@ -158,12 +158,23 @@
                             </li>
                         </ul>
                     </div>
+                    @if (! $umkm->owner->is_verified)
+                        <div class="info-section" style="background:#450a0a;border:1px solid #7f1d1d;">
+                            <div class="info-section-title" style="color:#fca5a5;">⚠️ Pemilik Belum Diverifikasi</div>
+                            <p style="font-size:12px;color:#fecaca;margin:0;">
+                                UMKM ini tidak dapat diverifikasi karena pemiliknya (<strong>{{ $umkm->owner->name }}</strong>) belum diverifikasi.
+                                Verifikasi pengguna terlebih dahulu agar UMKM dapat berjualan.
+                            </p>
+                        </div>
+                    @endif
+
                     @if (auth()->user()->isSuperAdmin())
                         <div class="btn-wrapper">
                             <form method="POST" action="{{ route('umkms.toggleVerify', $umkm) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button class="btn btn-xs {{ $umkm->is_verified ? 'btn-warning' : 'btn-success' }}">
+                                <button class="btn btn-xs {{ $umkm->is_verified ? 'btn-warning' : 'btn-success' }}"
+                                    {{ ! $umkm->owner->is_verified && ! $umkm->is_verified ? 'disabled title="Pemilik pengguna belum diverifikasi"' : '' }}>
                                     {{ $umkm->is_verified ? '✗ Batalkan Verifikasi' : '✓ Verifikasi' }}
                                 </button>
                             </form>

@@ -61,6 +61,11 @@ class UmkmController extends Controller
 
     public function toggleVerify(Umkm $umkm)
     {
+        // Prevent verifying UMKM if the owner user is not verified
+        if (! $umkm->is_verified && ! $umkm->owner->is_verified) {
+            return back()->with('error', "Tidak dapat memverifikasi UMKM \"{$umkm->name}\" karena pemilik pengguna ({$umkm->owner->name}) belum diverifikasi. Verifikasi pengguna terlebih dahulu.");
+        }
+
         $umkm->update(['is_verified' => ! $umkm->is_verified]);
         $status = $umkm->is_verified ? 'diverifikasi' : 'dibatalkan verifikasinya';
         return back()->with('success', "UMKM \"{$umkm->name}\" berhasil $status.");

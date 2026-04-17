@@ -49,8 +49,18 @@ class UserController extends Controller
 
     public function toggleVerify(User $user)
     {
-        $user->update(['is_verified' => !$user->is_verified]);
-        $status = $user->is_verified ? 'diverifikasi' : 'dibatalkan verifikasinya';
+        $newStatus = ! $user->is_verified;
+        $user->update(['is_verified' => $newStatus]);
+        $status = $newStatus ? 'diverifikasi' : 'dibatalkan verifikasinya';
+
+        // If user is being unverified, also unverify all their UMKMs
+        if (! $newStatus && $user->isOwner()) {
+            $unverifiedCount = $user->umkms()->where('is_verified', true)->update(['is_verified' => false]);
+            if ($unverifiedCount > 0) {
+                return back()->with('success', "Pengguna \"{$user->name}\" berhasil {$status}. {$unverifiedCount} UMKM miliknya juga otomatis dibatalkan verifikasinya karena pengguna tidak diverifikasi.");
+            }
+        }
+
         return back()->with('success', "Pengguna \"{$user->name}\" berhasil {$status}.");
     }
 

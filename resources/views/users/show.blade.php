@@ -44,6 +44,17 @@
                 <div class="card-header"><span class="card-title">🎮 Aksi</span></div>
                 <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
                     @if ($user->role === 'OWNER')
+                        @php
+                            $verifiedUmkmCount = $user->umkms()->where('is_verified', true)->count();
+                        @endphp
+                        @if (! $user->is_verified && $verifiedUmkmCount > 0)
+                            <div style="padding:10px 12px;background:#450a0a;border:1px solid #7f1d1d;border-radius:6px;">
+                                <p style="font-size:12px;color:#fecaca;margin:0;">
+                                    <strong>Peringatan:</strong> Pengguna ini memiliki <strong>{{ $verifiedUmkmCount }} UMKM terverifikasi</strong>.
+                                    Jika verifikasi pengguna dibatalkan, semua UMKM tersebut akan <strong>otomatis dibatalkan verifikasinya</strong> dan tidak bisa berjualan.
+                                </p>
+                            </div>
+                        @endif
                         <form method="POST" action="{{ route('users.toggleVerify', $user) }}">
                             @csrf @method('PATCH')
                             <button class="btn {{ $user->is_verified ? 'btn-warning' : 'btn-success' }}"
