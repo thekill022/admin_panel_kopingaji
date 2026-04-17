@@ -37,6 +37,15 @@
         justify-content: flex-end;
     }
     .user-tbl .action-flex .btn { font-size: 0.6rem; padding: 0.2rem 0.5rem; white-space: nowrap; }
+
+    @media (max-width: 768px) {
+        .user-tbl .col-wa, .user-tbl .col-date { display: none; }
+        .user-tbl .col-user { width: 40%; }
+        .user-tbl .col-role { width: 22%; }
+        .user-tbl .col-status { width: 22%; }
+        .user-tbl .col-action { width: 16%; }
+        .user-tbl th, .user-tbl td { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
+    }
 </style>
 
 <div class="card">
@@ -65,7 +74,7 @@
         </form>
     </div>
 
-    <div style="overflow-x:hidden;">
+    <div class="table-wrap">
         @if($users->isEmpty())
             <div class="empty-state"><div class="empty-icon">👥</div><p>Tidak ada pengguna ditemukan.</p></div>
         @else

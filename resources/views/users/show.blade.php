@@ -10,6 +10,21 @@
 
 @section('content')
 
+<style>
+    .detail-tbl { table-layout: fixed; width: 100%; border-collapse: separate; border-spacing: 0; }
+    .detail-tbl th, .detail-tbl td {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.8rem;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    .detail-tbl th { font-size: 0.65rem; color: var(--text-muted); background: var(--gray-50); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0px; }
+    .detail-tbl tbody tr:last-child td { border-bottom: none; }
+</style>
+
     <div style="display:grid;grid-template-columns:320px 1fr;gap:20px;">
 
         {{-- Left: User Card --}}
@@ -83,38 +98,37 @@
                     <div class="card-header"><span class="card-title">🏪 UMKM Dimiliki ({{ $user->umkms->count() }})</span>
                     </div>
                     <div class="table-wrap">
-                        <table>
+                        <table class="detail-tbl">
                             <thead>
                                 <tr>
-                                    <th>Nama UMKM</th>
-                                    <th>Produk</th>
-                                    <th>Fee Platform</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
+                                    <th style="width:30%">Nama UMKM</th>
+                                    <th style="width:15%">Produk</th>
+                                    <th style="width:25%">Fee Platform</th>
+                                    <th style="width:15%;text-align:center;">Status</th>
+                                    <th style="width:15%;text-align:right;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($user->umkms as $umkm)
                                     <tr>
                                         <td class="td-primary">{{ $umkm->name }}</td>
-                                        <td>{{ $umkm->products->count() }} produk</td>
-                                        <td>
+                                        <td class="td-muted">{{ $umkm->products->count() }} produk</td>
+                                        <td class="td-muted">
                                             @if ($umkm->platform_fee_type === 'percentage')
                                                 {{ $umkm->platform_fee_rate }}%
                                             @else
                                                 Rp {{ number_format($umkm->platform_fee_flat, 0, ',', '.') }}
                                             @endif
                                         </td>
-                                        <td>
+                                        <td style="text-align:center;">
                                             @if ($umkm->is_verified)
-                                                <span class="badge badge-success">Terverifikasi</span>
+                                                <span class="badge badge-success" style="font-size:0.6rem;padding:0.2rem 0.5rem;">Terverifikasi</span>
                                             @else
-                                                <span class="badge badge-warning">Belum</span>
+                                                <span class="badge badge-warning" style="font-size:0.6rem;padding:0.2rem 0.5rem;">Belum</span>
                                             @endif
                                         </td>
-                                        <td>
-                                            <a href="{{ route('umkms.show', $umkm) }}"
-                                                class="btn btn-xs btn-secondary">Detail</a>
+                                        <td style="text-align:right;">
+                                            <a href="{{ route('umkms.show', $umkm) }}" class="btn btn-xs btn-secondary">Detail</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -129,26 +143,21 @@
                     <div class="card-header"><span class="card-title">🛒 Riwayat Pesanan
                             ({{ $user->orders->count() }})</span></div>
                     <div class="table-wrap">
-                        <table>
+                        <table class="detail-tbl">
                             <thead>
                                 <tr>
-                                    <th>#ID</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Tanggal</th>
+                                    <th style="width:20%">#ID</th>
+                                    <th style="width:40%">Total</th>
+                                    <th style="width:20%;text-align:center;">Status</th>
+                                    <th style="width:20%">Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($user->orders->take(10) as $order)
                                     <tr>
-                                        <td><span
-                                                style="font-family:monospace;color:var(--coffee-400);">#{{ $order->id }}</span>
-                                        </td>
-                                        <td style="color:var(--coffee-400);font-weight:600;">Rp
-                                            {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                                        <td><span
-                                                class="badge badge-{{ strtolower($order->status) }}">{{ $order->status }}</span>
-                                        </td>
+                                        <td><span style="font-family:monospace;color:var(--coffee-400);">#{{ $order->id }}</span></td>
+                                        <td style="color:var(--coffee-400);font-weight:600;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                                        <td style="text-align:center;"><span class="badge badge-{{ strtolower($order->status) }}" style="font-size:0.6rem;padding:0.2rem 0.5rem;">{{ $order->status }}</span></td>
                                         <td class="td-muted">{{ $order->created_at->format('d/m/Y') }}</td>
                                     </tr>
                                 @endforeach
@@ -163,28 +172,23 @@
                     <div class="card-header"><span class="card-title">💸 Riwayat Penarikan
                             ({{ $user->withdrawals->count() }})</span></div>
                     <div class="table-wrap">
-                        <table>
+                        <table class="detail-tbl">
                             <thead>
                                 <tr>
-                                    <th>#ID</th>
-                                    <th>Jumlah</th>
-                                    <th>Bank</th>
-                                    <th>Status</th>
-                                    <th>Tanggal</th>
+                                    <th style="width:20%">#ID</th>
+                                    <th style="width:25%">Jumlah</th>
+                                    <th style="width:30%">Bank</th>
+                                    <th style="width:15%;text-align:center;">Status</th>
+                                    <th style="width:10%">Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($user->withdrawals->take(10) as $wd)
                                     <tr>
-                                        <td><span
-                                                style="font-family:monospace;color:var(--coffee-400);">#{{ $wd->id }}</span>
-                                        </td>
-                                        <td style="color:var(--coffee-400);font-weight:600;">Rp
-                                            {{ number_format($wd->amount, 0, ',', '.') }}</td>
+                                        <td><span style="font-family:monospace;color:var(--coffee-400);">#{{ $wd->id }}</span></td>
+                                        <td style="color:var(--coffee-400);font-weight:600;">Rp {{ number_format($wd->amount, 0, ',', '.') }}</td>
                                         <td class="td-primary">{{ $wd->bank_name }} · {{ $wd->bank_account }}</td>
-                                        <td><span
-                                                class="badge badge-{{ strtolower($wd->status) }}">{{ $wd->status }}</span>
-                                        </td>
+                                        <td style="text-align:center;"><span class="badge badge-{{ strtolower($wd->status) }}" style="font-size:0.6rem;padding:0.2rem 0.5rem;">{{ $wd->status }}</span></td>
                                         <td class="td-muted">{{ $wd->created_at->format('d/m/Y') }}</td>
                                     </tr>
                                 @endforeach

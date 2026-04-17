@@ -23,6 +23,15 @@
     .umkm-table .owner-email { font-size: 0.7rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
     .umkm-action-btns { display: flex; gap: 4px; }
     .umkm-action-btns .btn { font-size: 0.65rem; padding: 0.2rem 0.5rem; }
+
+    @media (max-width: 768px) {
+        .umkm-table .col-fee, .umkm-table .col-date { display: none; }
+        .umkm-table .col-name { width: 35%; }
+        .umkm-table .col-owner { width: 30%; }
+        .umkm-table .col-status { width: 15%; }
+        .umkm-table .col-action { width: 20%; }
+        .umkm-table th, .umkm-table td { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
+    }
 </style>
 
     <div class="card">
@@ -38,7 +47,7 @@
             </form>
         </div>
 
-        <div style="overflow-x:hidden;">
+        <div class="table-wrap">
             @if ($umkms->isEmpty())
                 <div class="empty-state">
                     <div class="empty-icon text-gray-200 mb-4 opacity-20"><i class="fas fa-store text-6xl"></i></div>

@@ -408,7 +408,7 @@
                     <span class="card-title"><i class="fas fa-box" style="color:#c4811f;margin-right:6px;"></i> Daftar Produk</span>
                     <a href="{{ route('products.index') }}?search={{ $umkm->name }}" class="btn btn-xs btn-secondary" style="font-size:0.65rem;">Lihat Semua →</a>
                 </div>
-                <div style="overflow-x:hidden;">
+                <div class="table-wrap">
                     @if ($umkm->products->isEmpty())
                         <div style="padding:3rem 2rem;text-align:center;">
                             <div style="font-size:3rem;opacity:0.15;margin-bottom:0.75rem;"><i class="fas fa-box-open"></i></div>

@@ -25,6 +25,16 @@
 
     .order-table .td-buyer-email { font-size: 0.7rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
     .order-table .td-umkm-name { white-space: normal; line-height: 1.3; }
+
+    @media (max-width: 768px) {
+        .order-table .col-id, .order-table .col-method, .order-table .col-date { display: none; }
+        .order-table .col-buyer { width: 33%; }
+        .order-table .col-umkm { width: 25%; }
+        .order-table .col-total { width: 17%; }
+        .order-table .col-status { width: 10%; }
+        .order-table .col-action { width: 15%; }
+        .order-table th, .order-table td { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
+    }
 </style>
 
 <div class="card mb-6">
@@ -53,7 +63,7 @@
         </form>
     </div>
 
-    <div style="overflow-x:hidden;">
+    <div class="table-wrap">
         @if($orders->isEmpty())
             <div class="empty-state"><div class="empty-icon">🛒</div><p>Tidak ada pesanan ditemukan.</p></div>
         @else

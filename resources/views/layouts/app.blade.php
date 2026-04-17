@@ -135,7 +135,12 @@
                 font-size: 0.65rem;
                 color: #4b5563;
             }
-            .tab-item.active .tab-count { background: var(--primary); color: white; }
+            /* Table Responsive Wrap */
+            .table-wrap {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+            }
 
             /* Forms */
             .search-bar {
@@ -243,29 +248,35 @@
             .animate-fade-in-down { animation: fadeInDown 0.3s ease-out; }
         </style>
     </head>
-    <body class="font-sans antialiased bg-gray-50 text-gray-900">
-        <div class="min-h-screen flex" x-data="{ sidebarOpen: true }">
+    <body class="font-sans antialiased bg-gray-50 text-gray-900 overflow-x-hidden">
+        <div class="min-h-screen flex" 
+             x-data="{ sidebarOpen: window.innerWidth >= 1024 }"
+             @resize.window="sidebarOpen = window.innerWidth >= 1024">
             
             <!-- Sidebar -->
             <aside 
-                class="fixed inset-y-0 left-0 bg-white border-r border-gray-200 transition-all duration-300 z-50 flex flex-col"
-                :class="sidebarOpen ? 'w-[var(--sidebar-width)] shadow-xl translate-x-0' : 'w-20 -translate-x-full lg:translate-x-0'"
+                class="fixed inset-y-0 left-0 bg-white border-r border-gray-200 transition-all duration-300 z-50 flex flex-col overflow-x-hidden"
+                :class="sidebarOpen ? 'w-full sm:w-[var(--sidebar-width)] lg:w-[var(--sidebar-width)] shadow-xl translate-x-0' : 'w-0 lg:w-20 -translate-x-full lg:translate-x-0'"
             >
                 <!-- Brand -->
-                <div class="h-16 flex items-center px-6 border-bottom border-gray-100 shrink-0">
+                <div class="h-16 flex items-center border-bottom border-gray-100 shrink-0 justify-between" :class="sidebarOpen ? 'px-6' : 'px-0 lg:justify-center'">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center text-white text-xl">
+                        <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center text-white text-xl">
                             <i class="fas fa-coffee"></i>
                         </div>
-                        <div class="overflow-hidden whitespace-nowrap" x-show="sidebarOpen">
+                        <div class="overflow-hidden whitespace-nowrap" x-show="sidebarOpen" style="display: none;">
                             <h1 class="font-bold text-gray-900 leading-none text-base">Kopi Ngaji</h1>
                             <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Admin Panel</span>
                         </div>
                     </div>
+                    <!-- Tumbel button tutup khusus mobile saat penuh layar -->
+                    <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors" x-show="sidebarOpen" style="display: none;">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+                <nav class="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 space-y-1" :class="sidebarOpen ? 'px-4 py-6' : 'px-2 py-4'">
                     <div class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider overflow-hidden" x-show="sidebarOpen">
                         Menu Utama
                     </div>
@@ -302,6 +313,10 @@
                         Laporan
                     </x-sidebar-link>
 
+                    <x-sidebar-link :href="route('refunds.index')" :active="request()->routeIs('refunds.*')" icon="fas fa-undo-alt" badge="{{ \App\Models\Refund::where('status','PENDING')->count() }}">
+                        Refund
+                    </x-sidebar-link>
+
                     @if(auth()->user()->isSuperAdmin())
                         <div class="pt-4 px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider overflow-hidden" x-show="sidebarOpen">
                             SuperAdmin
@@ -313,18 +328,18 @@
                 </nav>
 
                 <!-- User Profile Bottom -->
-                <div class="p-4 border-t border-gray-100">
-                    <div class="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
-                        <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">
+                <div class="border-t border-gray-100 shrink-0 transition-all duration-300" :class="sidebarOpen ? 'p-4' : 'p-2 py-4'">
+                    <div class="bg-gray-50 rounded-xl flex items-center transition-all duration-300" :class="sidebarOpen ? 'p-3 gap-3 justify-start' : 'p-2 flex-col gap-2 justify-center'">
+                        <div class="w-10 h-10 shrink-0 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
-                        <div class="flex-1 min-w-0" x-show="sidebarOpen">
-                            <p class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->name }}</p>
+                        <div class="flex-1 min-w-0" x-show="sidebarOpen" style="display: none;">
+                            <p class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->name ?: 'Admin' }}</p>
                             <p class="text-[10px] text-gray-500 font-medium uppercase">{{ auth()->user()->role }}</p>
                         </div>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('logout') }}" class="shrink-0 flex items-center justify-center" :class="sidebarOpen ? '' : 'w-full'">
                             @csrf
-                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition-colors" title="Logout">
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center" title="Logout">
                                 <i class="fas fa-power-off"></i>
                             </button>
                         </form>

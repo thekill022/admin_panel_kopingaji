@@ -29,6 +29,15 @@
     .wd-table .owner-email { font-size: 0.65rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
     .wd-action-btns { display: flex; gap: 4px; }
     .wd-action-btns .btn { font-size: 0.6rem; padding: 0.2rem 0.4rem; white-space: nowrap; }
+
+    @media (max-width: 768px) {
+        .wd-table .col-id, .wd-table .col-bruto, .wd-table .col-komisi, .wd-table .col-doku, .wd-table .col-date { display: none; }
+        .wd-table .col-owner { width: 25%; }
+        .wd-table .col-neto { width: 25%; }
+        .wd-table .col-rek { width: 25%; }
+        .wd-table .col-status { width: 12%; }
+        .wd-table .col-action { width: 13%; }
+    }
 </style>
 
 <div class="card">
@@ -56,7 +65,7 @@
         </form>
     </div>
 
-    <div style="overflow-x:hidden;">
+    <div class="table-wrap">
         @if($withdrawals->isEmpty())
             <div class="empty-state"><div class="empty-icon">💸</div><p>Tidak ada permintaan penarikan.</p></div>
         @else

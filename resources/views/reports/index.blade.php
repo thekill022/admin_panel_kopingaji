@@ -37,6 +37,16 @@
         line-height: 1.35;
         margin: 0;
     }
+
+    @media (max-width: 768px) {
+        .report-table .col-id, .report-table .col-cat, .report-table .col-date { display: none; }
+        .report-table .col-reporter { width: 25%; }
+        .report-table .col-target { width: 25%; }
+        .report-table .col-desc { width: 25%; }
+        .report-table .col-status { width: 13%; }
+        .report-table .col-action { width: 12%; }
+        .report-table th, .report-table td { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
+    }
 </style>
 
 <div class="card">
@@ -67,7 +77,7 @@
     </div>
 
     {{-- Table --}}
-    <div style="overflow-x:hidden;">
+    <div class="table-wrap">
         @if($reports->isEmpty())
             <div class="empty-state">
                 <i class="fas fa-flag empty-icon"></i>

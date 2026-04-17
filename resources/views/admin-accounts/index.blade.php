@@ -16,6 +16,47 @@
         <span style="font-size:13px;color:var(--text-muted);">Total: {{ $admins->total() }} admin</span>
     </div>
 
+<style>
+    .admin-tbl { table-layout: fixed; width: 100%; }
+    .admin-tbl th,
+    .admin-tbl td {
+        padding: 0.75rem 0.75rem;
+        font-size: 0.8rem;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .admin-tbl th { font-size: 0.65rem; padding: 0.6rem 0.75rem; }
+
+    .admin-tbl .col-admin   { width: 25%; }
+    .admin-tbl .col-email   { width: 20%; }
+    .admin-tbl .col-wa      { width: 15%; }
+    .admin-tbl .col-status  { width: 12%; text-align: center; }
+    .admin-tbl .col-date    { width: 12%; }
+    .admin-tbl .col-action  { width: 16%; overflow: visible; white-space: normal; text-align: right; }
+
+    .admin-tbl .action-flex {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .admin-tbl .action-flex .btn { font-size: 0.6rem; padding: 0.2rem 0.6rem; }
+    
+    .td-primary { font-weight:700; color:#111827; overflow:hidden; text-overflow:ellipsis; }
+    .td-muted { font-size:0.7rem; color:#6b7280; overflow:hidden; text-overflow:ellipsis; }
+
+    @media (max-width: 768px) {
+        .admin-tbl .col-email, .admin-tbl .col-wa, .admin-tbl .col-date { display: none; }
+        .admin-tbl .col-admin { width: 50%; }
+        .admin-tbl .col-status { width: 25%; text-align: right; }
+        .admin-tbl .col-action { width: 25%; }
+        .admin-tbl th, .admin-tbl td { font-size: 0.7rem; padding: 0.4rem 0.5rem; }
+        .admin-tbl th.col-status { text-align: right; }
+    }
+</style>
+
     <div class="table-wrap">
         @if($admins->isEmpty())
             <div class="empty-state">
@@ -25,31 +66,33 @@
                 <a href="{{ route('admin-accounts.create') }}" class="btn btn-primary">+ Tambah Admin</a>
             </div>
         @else
-        <table>
+        <table class="admin-tbl">
             <thead>
                 <tr>
-                    <th>Admin</th>
-                    <th>Email</th>
-                    <th>WhatsApp</th>
-                    <th>Status</th>
-                    <th>Bergabung</th>
-                    <th>Aksi</th>
+                    <th class="col-admin">Admin</th>
+                    <th class="col-email">Email</th>
+                    <th class="col-wa">WhatsApp</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-date">Bergabung</th>
+                    <th class="col-action">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($admins as $admin)
                 <tr>
-                    <td>
+                    <td class="col-admin">
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="avatar-sm">{{ strtoupper(substr($admin->name,0,1)) }}</div>
-                            <div>
+                            <div class="avatar-sm shrink-0">{{ strtoupper(substr($admin->name,0,1)) }}</div>
+                            <div style="min-width:0;flex:1;">
                                 <div class="td-primary">{{ $admin->name }}</div>
-                                <span class="badge badge-admin">ADMIN</span>
+                                <span class="badge badge-admin" style="font-size:0.6rem;padding:0.1rem 0.4rem;">ADMIN</span>
                             </div>
                         </div>
                     </td>
-                    <td class="td-primary">{{ $admin->email }}</td>
-                    <td>
+                    <td class="col-email">
+                        <div class="td-primary">{{ $admin->email }}</div>
+                    </td>
+                    <td class="col-wa">
                         @if($admin->whatsapp)
                             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $admin->whatsapp) }}"
                                target="_blank"
@@ -60,21 +103,21 @@
                             <span class="td-muted">—</span>
                         @endif
                     </td>
-                    <td>
+                    <td class="col-status">
                         @if($admin->is_verified)
-                            <span class="badge badge-approved">✓ Terverifikasi</span>
+                            <span class="badge badge-approved" style="font-size:0.6rem;padding:0.2rem 0.5rem;">✓ Terverifikasi</span>
                         @else
-                            <span class="badge badge-pending">Belum Verified</span>
+                            <span class="badge badge-pending" style="font-size:0.6rem;padding:0.2rem 0.5rem;">Belum Verified</span>
                         @endif
                     </td>
-                    <td class="td-muted">{{ $admin->created_at->format('d M Y') }}</td>
-                    <td>
-                        <div style="display:flex;gap:6px;">
-                            <a href="{{ route('admin-accounts.edit', $admin) }}" class="btn btn-xs btn-warning">✏ Edit</a>
+                    <td class="col-date td-muted">{{ $admin->created_at->format('d M Y') }}</td>
+                    <td class="col-action">
+                        <div class="action-flex">
+                            <a href="{{ route('admin-accounts.edit', $admin) }}" class="btn btn-warning">✏ Edit</a>
                             <form method="POST" action="{{ route('admin-accounts.destroy', $admin) }}"
                                   onsubmit="return confirm('Yakin hapus akun admin {{ $admin->name }}?')">
                                 @csrf @method('DELETE')
-                                <button class="btn btn-xs btn-danger">🗑 Hapus</button>
+                                <button class="btn btn-danger">🗑 Hapus</button>
                             </form>
                         </div>
                     </td>

@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WithdrawalController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RefundController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke login jika belum auth, kalau sudah ke dashboard
@@ -58,6 +59,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/reports/{report}/review', [ReportController::class, 'review'])->name('reports.review');
     Route::patch('/reports/{report}/dismiss', [ReportController::class, 'dismiss'])->name('reports.dismiss');
     Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
+
+    // Refunds
+    Route::get('/refunds', [RefundController::class, 'index'])->name('refunds.index');
+    Route::get('/refunds/{refund}', [RefundController::class, 'show'])->name('refunds.show');
+    Route::patch('/refunds/{refund}/approve', [RefundController::class, 'approve'])->name('refunds.approve');
+    Route::patch('/refunds/{refund}/reject', [RefundController::class, 'reject'])->name('refunds.reject');
 
     // SuperAdmin only routes
     Route::middleware(['superadmin'])->group(function () {

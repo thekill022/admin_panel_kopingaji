@@ -44,4 +44,9 @@ class Order extends Model
     {
         return $this->hasOne(Payment::class, 'order_id');
     }
+
+    public function refund()
+    {
+        return $this->hasOne(Refund::class, 'order_id');
+    }
 }
