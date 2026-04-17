@@ -406,7 +406,7 @@
                 <!-- Footer -->
                 <footer class="py-6 px-4 text-center border-t border-gray-100">
                     <p class="text-xs text-gray-400">
-                        &copy; {{ date('Y') }} Kopi Ngaji Admin Panel. Crafted with <i class="fas fa-heart text-red-400 mx-1"></i>
+                        &copy; {{ date('Y') }} Kopi Ngaji Admin Panel. 
                     </p>
                 </footer>
             </div>

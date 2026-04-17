@@ -6,6 +6,27 @@
 
 @section('content')
 
+<style>
+    /* ── Scoped: compact order table ── */
+    .order-table { table-layout: fixed; width: 100%; }
+    .order-table th,
+    .order-table td { padding: 0.75rem 0.75rem; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .order-table th { font-size: 0.65rem; padding: 0.6rem 0.75rem; }
+
+    /* Column widths */
+    .order-table .col-id      { width: 50px; }
+    .order-table .col-buyer   { width: 22%; }
+    .order-table .col-umkm    { width: 16%; }
+    .order-table .col-total   { width: 12%; }
+    .order-table .col-method  { width: 12%; }
+    .order-table .col-status  { width: 11%; }
+    .order-table .col-date    { width: 13%; }
+    .order-table .col-action  { width: 70px; }
+
+    .order-table .td-buyer-email { font-size: 0.7rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
+    .order-table .td-umkm-name { white-space: normal; line-height: 1.3; }
+</style>
+
 <div class="card mb-6">
     <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--dark-600);">
         <div class="tabs">
@@ -24,7 +45,7 @@
         </div>
         <form method="GET" style="display:flex;gap:8px;">
             <input type="hidden" name="status" value="{{ $status }}" />
-            <div class="search-bar" style="width:260px;">
+            <div class="search-bar" style="width:220px;">
                 <span class="search-bar-icon">🔍</span>
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari order / pembeli..." />
             </div>
@@ -32,42 +53,44 @@
         </form>
     </div>
 
-    <div class="table-wrap">
+    <div style="overflow-x:hidden;">
         @if($orders->isEmpty())
             <div class="empty-state"><div class="empty-icon">🛒</div><p>Tidak ada pesanan ditemukan.</p></div>
         @else
-        <table>
+        <table class="order-table">
             <thead>
                 <tr>
-                    <th>#ID</th>
-                    <th>Pembeli</th>
-                    <th>UMKM</th>
-                    <th>Total</th>
-                    <th>Metode Bayar</th>
-                    <th>Status</th>
-                    <th>Tanggal</th>
-                    <th>Aksi</th>
+                    <th class="col-id">#ID</th>
+                    <th class="col-buyer">Pembeli</th>
+                    <th class="col-umkm">UMKM</th>
+                    <th class="col-total">Total</th>
+                    <th class="col-method">Metode</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-date">Tanggal</th>
+                    <th class="col-action">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($orders as $order)
                 <tr>
-                    <td><span style="font-family:monospace;color:var(--coffee-400);">#{{ $order->id }}</span></td>
-                    <td>
-                        <div class="td-primary">{{ $order->buyer->name }}</div>
-                        <div class="td-muted">{{ $order->buyer->email }}</div>
+                    <td class="col-id"><span style="font-family:monospace;color:var(--coffee-400);font-weight:700;">#{{ $order->id }}</span></td>
+                    <td class="col-buyer">
+                        <div class="td-primary" style="font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;">{{ $order->buyer->name }}</div>
+                        <div class="td-buyer-email">{{ $order->buyer->email }}</div>
                     </td>
-                    <td class="td-primary">{{ $order->umkm->name }}</td>
-                    <td style="color:var(--coffee-400);font-weight:700;">Rp {{ number_format($order->total_price,0,',','.') }}</td>
-                    <td>
-                        <span class="badge {{ $order->payment_method === 'NON_CASH' ? 'badge-paid' : 'badge-buyer' }}">
-                            {{ $order->payment_method }}
+                    <td class="col-umkm">
+                        <span class="td-primary td-umkm-name" style="font-size:0.8rem;">{{ $order->umkm->name }}</span>
+                    </td>
+                    <td class="col-total" style="color:var(--coffee-400);font-weight:700;">Rp {{ number_format($order->total_price,0,',','.') }}</td>
+                    <td class="col-method">
+                        <span class="badge {{ $order->payment_method === 'NON_CASH' ? 'badge-paid' : 'badge-buyer' }}" style="font-size:0.6rem;padding:0.2rem 0.5rem;">
+                            {{ $order->payment_method ?? '—' }}
                         </span>
                     </td>
-                    <td><span class="badge badge-{{ strtolower($order->status) }}">{{ $order->status }}</span></td>
-                    <td class="td-muted">{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                    <td>
-                        <a href="{{ route('orders.show', $order) }}" class="btn btn-xs btn-secondary">Detail</a>
+                    <td class="col-status"><span class="badge badge-{{ strtolower($order->status) }}" style="font-size:0.6rem;padding:0.2rem 0.5rem;">{{ $order->status }}</span></td>
+                    <td class="col-date td-muted" style="font-size:0.75rem;">{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                    <td class="col-action">
+                        <a href="{{ route('orders.show', $order) }}" class="btn btn-xs btn-secondary" style="font-size:0.65rem;padding:0.2rem 0.5rem;">Detail</a>
                     </td>
                 </tr>
                 @endforeach

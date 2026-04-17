@@ -6,10 +6,42 @@
 
 @section('content')
 
+<style>
+    .report-table { table-layout: fixed; width: 100%; }
+    .report-table th,
+    .report-table td { padding: 0.7rem 0.7rem; font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+    .report-table th { font-size: 0.6rem; padding: 0.55rem 0.7rem; }
+
+    .report-table .col-id       { width: 40px; text-align: center; }
+    .report-table .col-reporter { width: 17%; }
+    .report-table .col-target   { width: 18%; }
+    .report-table .col-cat      { width: 14%; }
+    .report-table .col-desc     { width: 22%; }
+    .report-table .col-status   { width: 9%; }
+    .report-table .col-date     { width: 11%; }
+    .report-table .col-action   { width: 80px; text-align: center; overflow: visible; }
+
+    .report-table .reporter-name { font-weight: 600; font-size: 0.78rem; color: #111827; overflow: hidden; text-overflow: ellipsis; }
+    .report-table .reporter-email { font-size: 0.65rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
+    .report-table .target-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1px; }
+    .report-table .target-name { font-weight: 600; font-size: 0.78rem; color: #111827; overflow: hidden; text-overflow: ellipsis; }
+    .report-table .target-sub { font-size: 0.65rem; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; }
+    .report-table .desc-clamp {
+        font-size: 0.75rem;
+        color: #4b5563;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+        line-height: 1.35;
+        margin: 0;
+    }
+</style>
+
 <div class="card">
     {{-- Card Header: Tabs + Search --}}
     <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid #f3f4f6;">
-        {{-- Status Tabs --}}
         <div class="tabs">
             @foreach([
                 'all'       => ['label' => 'Semua',     'count' => $counts['all']],
@@ -24,102 +56,90 @@
             @endforeach
         </div>
 
-        {{-- Search --}}
         <form method="GET" action="{{ route('reports.index') }}" style="display:flex;gap:8px;align-items:center;">
             <input type="hidden" name="status" value="{{ $status }}">
-            <div class="search-bar" style="width:260px;">
+            <div class="search-bar" style="width:200px;">
                 <i class="fas fa-search search-bar-icon"></i>
-                <input type="text" name="search" value="{{ $search }}" placeholder="Cari pelapor, UMKM, produk...">
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari pelapor, UMKM...">
             </div>
             <button type="submit" class="btn btn-secondary btn-sm">Cari</button>
         </form>
     </div>
 
     {{-- Table --}}
-    <div class="table-wrap">
+    <div style="overflow-x:hidden;">
         @if($reports->isEmpty())
             <div class="empty-state">
                 <i class="fas fa-flag empty-icon"></i>
                 <p>Tidak ada laporan ditemukan</p>
             </div>
         @else
-            <table>
+            <table class="report-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Pelapor</th>
-                        <th>Target Laporan</th>
-                        <th>Kategori</th>
-                        <th>Deskripsi</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
+                        <th class="col-id">ID</th>
+                        <th class="col-reporter">Pelapor</th>
+                        <th class="col-target">Target</th>
+                        <th class="col-cat">Kategori</th>
+                        <th class="col-desc">Deskripsi</th>
+                        <th class="col-status">Status</th>
+                        <th class="col-date">Tanggal</th>
+                        <th class="col-action">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($reports as $report)
                         <tr>
-                            <td><span style="font-family:monospace;color:#9ca3af;">#{{ $report->id }}</span></td>
-
-                            <td>
-                                <div style="display:flex;align-items:center;gap:8px;">
-                                    <div style="width:32px;height:32px;border-radius:50%;background:#fef3c7;color:#b45309;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">
-                                        {{ strtoupper(substr($report->reporter->name ?? '?', 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight:600;font-size:13px;color:#111827;">{{ $report->reporter->name ?? '-' }}</div>
-                                        <div style="font-size:11px;color:#9ca3af;">{{ $report->reporter->email ?? '' }}</div>
-                                    </div>
-                                </div>
+                            <td class="col-id" style="text-align:center;">
+                                <span style="font-family:monospace;color:#c4811f;font-weight:700;font-size:0.8rem;">{{ $report->id }}</span>
                             </td>
 
-                            <td>
+                            <td class="col-reporter">
+                                <div class="reporter-name">{{ $report->reporter->name ?? '-' }}</div>
+                                <div class="reporter-email">{{ $report->reporter->email ?? '' }}</div>
+                            </td>
+
+                            <td class="col-target">
                                 @if($report->product)
-                                    <div>
-                                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#d97706;margin-bottom:2px;">Produk</div>
-                                        <div style="font-weight:600;font-size:13px;color:#111827;">{{ Str::limit($report->product->name, 28) }}</div>
-                                        <div style="font-size:11px;color:#9ca3af;">{{ $report->umkm->name ?? '' }}</div>
-                                    </div>
+                                    <div class="target-label" style="color:#d97706;">Produk</div>
+                                    <div class="target-name">{{ Str::limit($report->product->name, 24) }}</div>
+                                    <div class="target-sub">{{ $report->umkm->name ?? '' }}</div>
                                 @elseif($report->umkm)
-                                    <div>
-                                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#4f46e5;margin-bottom:2px;">UMKM</div>
-                                        <div style="font-weight:600;font-size:13px;color:#111827;">{{ $report->umkm->name }}</div>
-                                    </div>
+                                    <div class="target-label" style="color:#4f46e5;">UMKM</div>
+                                    <div class="target-name">{{ $report->umkm->name }}</div>
                                 @else
-                                    <span style="font-size:12px;color:#d1d5db;">Target dihapus</span>
+                                    <span style="font-size:0.7rem;color:#d1d5db;">Dihapus</span>
                                 @endif
                             </td>
 
-                            <td>
-                                <span class="badge" style="background:#f3f4f6;color:#374151;white-space:nowrap;">
+                            <td class="col-cat">
+                                <span class="badge" style="background:#f3f4f6;color:#374151;font-size:0.55rem;padding:0.15rem 0.4rem;white-space:normal;line-height:1.3;display:inline-block;text-align:center;">
                                     {{ \App\Models\Report::$categories[$report->category] ?? $report->category }}
                                 </span>
                             </td>
 
-                            <td style="max-width:220px;">
-                                <p style="font-size:13px;color:#4b5563;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;" title="{{ $report->description }}">
-                                    {{ $report->description }}
-                                </p>
+                            <td class="col-desc">
+                                <p class="desc-clamp" title="{{ $report->description }}">{{ $report->description }}</p>
                             </td>
 
-                            <td>
+                            <td class="col-status">
                                 @if($report->status === 'PENDING')
-                                    <span class="badge badge-pending">Pending</span>
+                                    <span class="badge badge-pending" style="font-size:0.55rem;padding:0.15rem 0.4rem;">Pending</span>
                                 @elseif($report->status === 'REVIEWED')
-                                    <span class="badge badge-approved">Reviewed</span>
+                                    <span class="badge badge-approved" style="font-size:0.55rem;padding:0.15rem 0.4rem;">Reviewed</span>
                                 @else
-                                    <span class="badge" style="background:#f3f4f6;color:#6b7280;">Dismissed</span>
+                                    <span class="badge" style="background:#f3f4f6;color:#6b7280;font-size:0.55rem;padding:0.15rem 0.4rem;">Dismissed</span>
                                 @endif
                             </td>
 
-                            <td>
-                                <div style="font-size:13px;color:#111827;">{{ $report->created_at->format('d M Y') }}</div>
-                                <div style="font-size:11px;color:#9ca3af;">{{ $report->created_at->format('H:i') }}</div>
+                            <td class="col-date">
+                                <div style="font-size:0.72rem;color:#111827;">{{ $report->created_at->format('d/m/Y') }}</div>
+                                <div style="font-size:0.62rem;color:#9ca3af;">{{ $report->created_at->format('H:i') }}</div>
                             </td>
 
-                            <td>
-                                <a href="{{ route('reports.show', $report) }}" class="btn btn-xs btn-secondary">
-                                    <i class="fas fa-eye"></i> Detail
+                            <td class="col-action" style="text-align:center;">
+                                <a href="{{ route('reports.show', $report) }}" class="btn btn-xs btn-secondary" style="font-size:0.6rem;padding:0.2rem 0.5rem;">
+                                    Detail
                                 </a>
                             </td>
                         </tr>
